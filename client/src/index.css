@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------------
+   Design tokens - RGB triplets so Tailwind can apply opacity (bg-brand/20)
+   ------------------------------------------------------------------------ */
+:root {
+  color-scheme: light;
+  --c-bg: 244 245 251;
+  --c-surface: 255 255 255;
+  --c-raised: 237 238 248;
+  --c-line: 220 222 240;
+  --c-ink: 18 18 42;
+  --c-muted: 99 102 135;
+  --c-brand: 109 40 217; /* violet-700 */
+  --c-brand-ink: 255 255 255;
+  --c-accent: 14 116 144; /* cyan-700: white text on it passes WCAG AA */
+  --c-danger: 220 38 38;
+  --c-success: 22 163 74;
+  --glow-1: 139 92 246 / 0.12;
+  --glow-2: 34 211 238 / 0.12;
+}
+
+.dark {
+  color-scheme: dark;
+  --c-bg: 7 7 14;
+  --c-surface: 15 15 28;
+  --c-raised: 24 24 44;
+  --c-line: 42 42 72;
+  --c-ink: 236 236 250;
+  --c-muted: 148 150 184;
+  --c-brand: 168 85 247; /* electric purple */
+  --c-brand-ink: 7 7 14; /* dark text on the neon gradient (white on cyan is only 1.7:1) */
+  --c-accent: 34 211 238; /* neon cyan */
+  --c-danger: 248 113 113;
+  --c-success: 74 222 128;
+  --glow-1: 168 85 247 / 0.2;
+  --glow-2: 34 211 238 / 0.14;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-bg font-sans text-ink antialiased;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+  /* Ambient neon glows behind everything */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(60rem 30rem at 10% -10%, rgb(var(--glow-1)), transparent 60%),
+      radial-gradient(50rem 28rem at 100% 0%, rgb(var(--glow-2)), transparent 60%);
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-bg;
+  }
+  ::selection {
+    @apply bg-brand/40;
+  }
+  img {
+    @apply max-w-full;
+  }
+}
+
+@layer components {
+  /* Buttons: min 44px tap target (WCAG / Apple HIG) */
+  .btn {
+    @apply inline-flex min-h-[44px] select-none items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+  }
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-brand to-accent text-brand-ink shadow-glow hover:brightness-110;
+  }
+  .btn-outline {
+    @apply btn border border-line bg-surface/60 text-ink hover:border-brand hover:bg-raised;
+  }
+  .btn-ghost {
+    @apply btn text-muted hover:bg-raised hover:text-ink;
+  }
+  .btn-danger {
+    @apply btn border border-danger/40 text-danger hover:bg-danger/10;
+  }
+  .btn-sm {
+    @apply min-h-[36px] rounded-lg px-3 py-1 text-xs;
+  }
+  .icon-btn {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-xl text-muted transition hover:bg-raised hover:text-ink active:scale-95;
+  }
+
+  /* 16px text: iOS Safari zooms into inputs smaller than that */
+  .input {
+    @apply min-h-[44px] w-full rounded-xl border border-line bg-raised/60 px-3.5 py-2 text-base text-ink placeholder:text-muted/70 transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/40;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+
+  .card {
+    @apply rounded-2xl border border-line bg-surface/80 shadow-card backdrop-blur;
+  }
+  .card-hover {
+    @apply transition duration-200 hover:-translate-y-0.5 hover:border-brand/60 hover:shadow-glow;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-line bg-raised/70 px-2.5 py-0.5 text-xs text-muted;
+  }
+  .section-title {
+    @apply font-display text-xs font-bold uppercase tracking-[0.18em] text-muted;
+  }
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent;
+  }
+  .notice-error {
+    @apply rounded-xl border border-danger/40 bg-danger/10 p-3 text-sm text-danger;
+  }
+  .notice-success {
+    @apply rounded-xl border border-success/40 bg-success/10 p-3 text-sm text-success;
+  }
+  .notice-info {
+    @apply rounded-xl border border-accent/40 bg-accent/10 p-3 text-sm text-accent;
+  }
+  .skeleton {
+    @apply relative overflow-hidden rounded-xl bg-raised;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 animate-[shimmer_1.4s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent;
+    transform: translateX(-100%);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
